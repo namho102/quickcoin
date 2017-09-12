@@ -1,6 +1,8 @@
 package example.requestsample;
 
+import android.content.res.Resources;
 import android.os.Handler;
+import android.support.v4.media.session.IMediaSession;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,13 +28,15 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static java.security.AccessController.getContext;
+
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    TextView txtString;
-    TextView rateString;
-    public String url = "https://api.coindesk.com/v1/bpi/currentprice.json";
+
+//    public String url = "https://api.cryptonator.com/api/ticker/BTC-USD";
     private SwipeRefreshLayout swipeLayout;
+    private String coinIDs[] = {"BTC", "LTC", "DASH", "ETH"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,29 +46,22 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
 
-        txtString = (TextView)findViewById(R.id.textView);
-        rateString = (TextView)findViewById(R.id.rate);
-        try {
-            runRequestTask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
+        runMultiTask();
     }
 
 //
     @Override
     public void onRefresh() {
-        try {
-            runRequestTask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        runMultiTask();
 
     }
 
-    void runRequestTask() throws IOException {
+    void runRequestTask(final String coinID) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
+        String url =  "https://api.cryptonator.com/api/ticker/" + coinID + "-USD";
 
         Request request = new Request.Builder()
                 .url(url)
@@ -82,19 +79,22 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 final String myResponse = response.body().string();
 
                 MainActivity.this.runOnUiThread(new Runnable() {
+
+
                     @Override
                     public void run() {
 
                         try {
                             JSONObject jsonObj = new JSONObject(myResponse);
-                            String chartName = jsonObj.getString("chartName");
-                            JSONObject bpi = new JSONObject(jsonObj.getString("bpi"));
-                            JSONObject USD = new JSONObject(bpi.getString("USD"));
-                            String rate = USD.getString("rate");
-                            System.out.println(rate);
+                            JSONObject tickerObj = new JSONObject(jsonObj.getString("ticker"));
+                            double price = tickerObj.getDouble("price");
 
-                            txtString.setText(chartName);
-                            rateString.setText(rate + "USD");
+                            Resources res = getResources();
+                            int id = res.getIdentifier(coinID, "id", getPackageName());
+
+                            TextView priceTextView = (TextView)findViewById(id);
+
+                            priceTextView.setText(String.format("%.2f", price) + " USD");
 
                             swipeLayout.setRefreshing(false);
 
@@ -109,13 +109,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
     }
 
-    void load(View view) {
-        try {
-            runRequestTask();
-        } catch (IOException e) {
-            e.printStackTrace();
+    void runMultiTask() {
+        for (String coinID : coinIDs) {
+            try {
+                runRequestTask(coinID);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
+
 
 
 }
