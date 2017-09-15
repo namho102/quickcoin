@@ -38,7 +38,8 @@ import static java.security.AccessController.getContext;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, RecyclerViewAdapter.ItemListener {
 
 
-//    public String url = "https://api.cryptonator.com/api/ticker/BTC-USD";
+
+    private String url =  "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,LTC,DASH,ETH&tsyms=USD";
     private SwipeRefreshLayout swipeLayout;
     private String coinIDs[] = {"BTC", "LTC", "DASH", "ETH"};
     private ArrayList<DataModel> arrayList;
@@ -68,25 +69,21 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
 
+        updateData();
 
-
-        runMultiTask();
     }
 
 //
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRefresh() {
-        runMultiTask();
+        updateData();
 
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void runRequestTask(final String coinID) throws IOException {
-
+    private void updateData() {
         OkHttpClient client = new OkHttpClient();
-        String url =  "https://api.cryptonator.com/api/ticker/" + coinID + "-USD";
+
 
         Request request = new Request.Builder()
                 .url(url)
@@ -112,20 +109,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     public void run() {
 
                         try {
+                            arrayList = new ArrayList<>();
                             JSONObject jsonObj = new JSONObject(myResponse);
-                            JSONObject tickerObj = new JSONObject(jsonObj.getString("ticker"));
-                            double price = tickerObj.getDouble("price");
 
-//                            Resources res = getResources();
-//                            int id = res.getIdentifier(coinID, "id", getPackageName());
-//
-//                            TextView priceTextView = (TextView)findViewById(id);
-//
-//                            priceTextView.setText(String.format("%.2f", price) + " USD");
+                            for(String coinID: coinIDs) {
+                                arrayList.add(new DataModel(coinID, String.format("%.2f", getPrice(jsonObj, coinID)) + " USD", "#09A9FF"));
+                            }
 
-                            arrayList.add(new DataModel(coinID, String.format("%.2f", price) + " USD", "#09A9FF"));
+                            adapter.updateList(arrayList);
 
-                            updateData(arrayList);
+
+
 
                             swipeLayout.setRefreshing(false);
 
@@ -138,35 +132,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             }
         });
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void runMultiTask() {
-        arrayList = new ArrayList<>();
-
-        for (String coinID : coinIDs) {
-            try {
-                runRequestTask(coinID);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-//        try {
-//            runRequestTask("BTC");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        System.out.println(arrayList);
-//
-//        layoutManager = new AutoFitGridLayoutManager(this, 500);
-//        recyclerView.setLayoutManager(layoutManager);
-//        adapter = new RecyclerViewAdapter(arrayList);
-//        recyclerView.setAdapter(adapter);
 
     }
+
 
 
     @Override
@@ -174,10 +143,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     }
 
-    void updateData(ArrayList<DataModel> values) {
-        layoutManager = new AutoFitGridLayoutManager(this, 500);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new RecyclerViewAdapter(values);
-        recyclerView.setAdapter(adapter);
+    public double getPrice(JSONObject jsonObj, String coinName) {
+        try {
+            JSONObject tickerObj = new JSONObject(jsonObj.getString(coinName));
+            return tickerObj.getDouble("USD");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
+
+
+
 }
