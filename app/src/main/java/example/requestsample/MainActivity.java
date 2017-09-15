@@ -55,10 +55,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         arrayList = new ArrayList<>();
-//        arrayList.add(new DataModel("Item 1", R.drawable.battle, "#09A9FF"));
-//        arrayList.add(new DataModel("Item 2", R.drawable.beer, "#3E51B1"));
-//        arrayList.add(new DataModel("Item 3", R.drawable.ferrari, "#673BB7"));
-//        arrayList.add(new DataModel("Item 4", R.drawable.jetpack_joyride, "#4BAA50"));
+
+        for(String coinID: coinIDs) {
+            arrayList.add(new DataModel(coinID, "0.0 USD", "#373936"));
+        }
+
 
         adapter = new RecyclerViewAdapter(arrayList);
         recyclerView.setAdapter(adapter);
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
 
-        updateData();
+//        updateData();
 
     }
 
@@ -109,11 +110,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     public void run() {
 
                         try {
-                            arrayList = new ArrayList<>();
+//                            arrayList = new ArrayList<>();
                             JSONObject jsonObj = new JSONObject(myResponse);
 
-                            for(String coinID: coinIDs) {
-                                arrayList.add(new DataModel(coinID, String.format("%.2f", getPrice(jsonObj, coinID)) + " USD", "#09A9FF"));
+//                            for(String coinID: coinIDs) {
+//                                arrayList.add(new DataModel(coinID, String.format("%.2f", getPrice(jsonObj, coinID)) + " USD", "#09A9FF"));
+//                            }
+
+                            for(DataModel item: arrayList) {
+                                item.price = String.format("%.2f", getPrice(jsonObj, item.coinName)) + " USD";
                             }
 
                             adapter.updateList(arrayList);

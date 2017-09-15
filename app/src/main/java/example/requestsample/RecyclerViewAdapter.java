@@ -32,6 +32,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public TextView coinNameView;
         public TextView priceView;
+        public ImageView logoView;
         public RelativeLayout relativeLayout;
         DataModel item;
 
@@ -42,6 +43,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             v.setOnClickListener(this);
             coinNameView = (TextView) v.findViewById(R.id.coinNameView);
             priceView = (TextView) v.findViewById(R.id.priceView);
+            logoView = (ImageView) v.findViewById(R.id.imageView);
             relativeLayout = (RelativeLayout) v.findViewById(R.id.relativeLayout);
 
         }
@@ -51,6 +53,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             coinNameView.setText(item.coinName);
             priceView.setText(item.price);
+            Context context = logoView.getContext();
+            int id = context.getResources().getIdentifier(item.coinName.toLowerCase(), "drawable", context.getPackageName());
+            logoView.setImageResource(id);
+//
+//            logoView.setImageResource(R.drawable.BTC);
+
             relativeLayout.setBackgroundColor(Color.parseColor(item.color));
 
         }

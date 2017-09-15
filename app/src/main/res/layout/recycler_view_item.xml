@@ -27,19 +27,40 @@
                 android:id="@+id/coinNameView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/priceView"
-                android:layout_centerHorizontal="true"
-                android:textColor="@android:color/white" />
+
+                android:text="TextView"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:layout_alignTop="@+id/imageView"
+                android:layout_alignLeft="@+id/priceView"
+                android:layout_alignStart="@+id/priceView"
+                android:layout_marginLeft="11dp"
+                android:layout_marginStart="11dp" />
 
             <TextView
                 android:id="@+id/priceView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_marginBottom="11dp"
+                android:layout_marginEnd="63dp"
+                android:layout_marginRight="63dp"
                 android:text="TextView"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:textSize="24sp"
+                android:layout_alignBottom="@+id/imageView"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="42dp"
+                android:layout_marginStart="42dp"
+                card_view:srcCompat="@color/blue_bright" />
 
         </RelativeLayout>
 
