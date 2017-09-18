@@ -18,6 +18,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     ArrayList<DataModel> mValues;
     protected ItemListener mListener;
+    int itemInitCount = 0;
 
     public RecyclerViewAdapter(ArrayList<DataModel> values) {
         mValues = values;
@@ -48,18 +49,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         }
 
-        public void setData(DataModel item) {
+        public void setData(final DataModel item) {
             this.item = item;
 
-            coinNameView.setText(item.coinName);
+//            System.out.println(item.price);
             priceView.setText(item.price);
-            Context context = logoView.getContext();
-            int id = context.getResources().getIdentifier(item.coinName.toLowerCase(), "drawable", context.getPackageName());
-            logoView.setImageResource(id);
-//
+
+            if(itemInitCount != getItemCount()) {
+                coinNameView.setText(item.coinName);
+
+                Context context = logoView.getContext();
+                int id = context.getResources().getIdentifier(item.coinName.toLowerCase(), "drawable", context.getPackageName());
+                logoView.setImageResource(id);
+
 //            logoView.setImageResource(R.drawable.BTC);
 
-            relativeLayout.setBackgroundColor(Color.parseColor(item.color));
+                relativeLayout.setBackgroundColor(Color.parseColor(item.color));
+                itemInitCount++;
+            }
 
         }
 

@@ -37,8 +37,6 @@ import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, RecyclerViewAdapter.ItemListener {
 
-
-
     private String url =  "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,LTC,DASH,ETH&tsyms=USD";
     private SwipeRefreshLayout swipeLayout;
     private String coinIDs[] = {"BTC", "LTC", "DASH", "ETH"};
@@ -70,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
 
-//        updateData();
+        updateData();
 
     }
 
@@ -85,11 +83,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private void updateData() {
         OkHttpClient client = new OkHttpClient();
 
-
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-
 
 
         client.newCall(request).enqueue(new Callback() {
@@ -110,9 +106,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     public void run() {
 
                         try {
-//                            arrayList = new ArrayList<>();
                             JSONObject jsonObj = new JSONObject(myResponse);
-
+//                            arrayList = new ArrayList<>();
+//
+//
 //                            for(String coinID: coinIDs) {
 //                                arrayList.add(new DataModel(coinID, String.format("%.2f", getPrice(jsonObj, coinID)) + " USD", "#09A9FF"));
 //                            }
@@ -122,9 +119,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             }
 
                             adapter.updateList(arrayList);
-
-
-
 
                             swipeLayout.setRefreshing(false);
 
@@ -140,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
     }
-
 
 
     @Override

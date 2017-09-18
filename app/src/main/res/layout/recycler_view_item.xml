@@ -28,28 +28,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:text="TextView"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:layout_alignTop="@+id/imageView"
                 android:layout_alignLeft="@+id/priceView"
                 android:layout_alignStart="@+id/priceView"
-                android:layout_marginLeft="11dp"
-                android:layout_marginStart="11dp" />
+                android:layout_alignTop="@+id/imageView"
+                android:text="TextView"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/priceView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/imageView"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
                 android:layout_marginBottom="11dp"
                 android:layout_marginEnd="63dp"
                 android:layout_marginRight="63dp"
                 android:text="TextView"
                 android:textColor="#fff"
-                android:textSize="24sp"
-                android:layout_alignBottom="@+id/imageView"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/imageView"
