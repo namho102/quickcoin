@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="140dp"
         card_view:cardCornerRadius="0dp"
-        card_view:cardElevation="@dimen/margin10"
-        card_view:cardMaxElevation="@dimen/margin10"
-        card_view:contentPadding="@dimen/margin10">
+        card_view:cardElevation="@dimen/margin5"
+        card_view:cardMaxElevation="@dimen/margin5"
+        card_view:contentPadding="@dimen/margin5">
 
 
         <RelativeLayout
@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:background="@drawable/selector"
             android:orientation="vertical">
 
 

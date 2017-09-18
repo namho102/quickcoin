@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.dinuscxj.refresh.RecyclerRefreshLayout;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,17 +37,17 @@ import okhttp3.Response;
 import static java.security.AccessController.getContext;
 
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, RecyclerViewAdapter.ItemListener {
+public class MainActivity extends AppCompatActivity implements RecyclerRefreshLayout.OnRefreshListener, RecyclerViewAdapter.ItemListener {
 
     private String url =  "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,LTC,DASH,ETH&tsyms=USD";
-    private SwipeRefreshLayout swipeLayout;
+    private RecyclerRefreshLayout swipeLayout;
     private String coinIDs[] = {"BTC", "LTC", "DASH", "ETH"};
     private ArrayList<DataModel> arrayList;
     private RecyclerView recyclerView;
     private AutoFitGridLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,15 +67,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         layoutManager = new AutoFitGridLayoutManager(this, 500);
         recyclerView.setLayoutManager(layoutManager);
 
-        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeLayout = (RecyclerRefreshLayout) findViewById(R.id.swipe_container);
+        swipeLayout.setRefreshStyle(RecyclerRefreshLayout.RefreshStyle.PINNED);
+        swipeLayout.setRefreshInitialOffset(30);
         swipeLayout.setOnRefreshListener(this);
 
         updateData();
 
     }
 
-//
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRefresh() {
         updateData();

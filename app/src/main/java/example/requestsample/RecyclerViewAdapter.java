@@ -64,7 +64,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 //            logoView.setImageResource(R.drawable.BTC);
 
-                relativeLayout.setBackgroundColor(Color.parseColor(item.color));
+//                relativeLayout.setBackgroundColor(Color.parseColor(item.color));
                 itemInitCount++;
             }
 
