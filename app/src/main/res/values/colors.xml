@@ -7,5 +7,8 @@
     <color name="green_light">#58DE34</color>
     <color name="orange_light">#DED934</color>
     <color name="red_light">#F77258</color>
-
+    <color name="item_background">#444153</color>
+    <color name="guillotine_background">#33313e</color>
+    <color name="guillotine_background_dark">#383547</color>
+    <color name="selected_item_color">#30d1d5</color>
 </resources>
