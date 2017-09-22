@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
 
     private String url =  "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,LTC,DASH,ETH&tsyms=USD";
     private RecyclerRefreshLayout swipeLayout;
-    private String coinIDs[] = {"BTC", "LTC", "DASH", "ETH"};
+//    private String coinIDs[] = {"BTC", "LTC", "DASH", "ETH"};
     private ArrayList<DataModel> arrayList;
     private RecyclerView recyclerView;
     private AutoFitGridLayoutManager layoutManager;
@@ -80,12 +80,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
                 .build();
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        arrayList = new ArrayList<>();
 
-        for(String coinID: coinIDs) {
-            arrayList.add(new DataModel(coinID, "0.0 USD", "#373936"));
-        }
-
+        //fake data
+        arrayList = new ArrayList<DataModel>() {{
+            add(new DataModel("BTC", "Bitcoin", 3573.27));
+            add(new DataModel("LTC", "Litecoin", 45.35));
+            add(new DataModel("DASH", "Dash", 332.33));
+            add(new DataModel("ETH", "Ethereum", 256.65));
+        }};
 
         adapter = new RecyclerViewAdapter(arrayList);
         recyclerView.setAdapter(adapter);
@@ -95,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
 
         swipeLayout = (RecyclerRefreshLayout) findViewById(R.id.swipe_container);
         swipeLayout.setRefreshStyle(RecyclerRefreshLayout.RefreshStyle.FLOAT);
-        swipeLayout.setRefreshInitialOffset(30);
+//        swipeLayout.setRefreshInitialOffset(30);
         swipeLayout.setOnRefreshListener(this);
 
-        updateData();
+//        updateData();
 
     }
 
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
 //                            }
 
                             for(DataModel item: arrayList) {
-                                item.price = String.format("%.2f", getPrice(jsonObj, item.coinName)) + " USD";
+                                item.price = getPrice(jsonObj, item.coinId);
                             }
 
                             adapter.updateList(arrayList);

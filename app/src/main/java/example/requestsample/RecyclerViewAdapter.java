@@ -53,14 +53,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             this.item = item;
 
 //            System.out.println(item.price);
-            priceView.setText(item.price);
+            priceView.setText(String.format("%.2f", item.price) + " USD");
 
             if(itemInitCount != getItemCount()) {
                 coinNameView.setText(item.coinName);
 
                 Context context = logoView.getContext();
-                int id = context.getResources().getIdentifier(item.coinName.toLowerCase(), "drawable", context.getPackageName());
-                logoView.setImageResource(id);
+                int imageId = context.getResources().getIdentifier(item.coinId.toLowerCase(), "drawable", context.getPackageName());
+                logoView.setImageResource(imageId);
 
 //            logoView.setImageResource(R.drawable.BTC);
 

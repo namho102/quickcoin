@@ -3,15 +3,14 @@ package example.requestsample;
 
 public class DataModel {
 
-
+    public String coinId;
     public String coinName;
-    public String price;
-    public String color;
+    public double price;
 
-    public DataModel(String t, String d, String c )
+    public DataModel(String id, String name, double price)
     {
-        coinName = t;
-        price = d;
-        color = c;
+        this.coinId = id;
+        this.coinName = name;
+        this.price = price;
     }
 }
