@@ -4,11 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="blue_bright">#34AADE</color>
-    <color name="green_light">#58DE34</color>
+    <color name="green_light">#58de34</color>
     <color name="orange_light">#DED934</color>
     <color name="red_light">#F77258</color>
-    <color name="item_background">#444153</color>
-    <color name="guillotine_background">#33313e</color>
+    <color name="item_background">#4d4e59</color>
+    <color name="guillotine_background">#19191d</color>
     <color name="guillotine_background_dark">#383547</color>
     <color name="selected_item_color">#30d1d5</color>
+    <color name="card_background">#222329</color>
 </resources>

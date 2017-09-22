@@ -50,13 +50,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
 
         public void setData(final DataModel item) {
+            if(this.item != null) {
+                System.out.println(this.item.price);
+            }
+
+//            System.out.println("new price" + item.price);
             this.item = item;
 
-//            System.out.println(item.price);
-            priceView.setText(String.format("%.2f", item.price) + " USD");
+            System.out.println(item.price);
+            priceView.setText("$" + String.format("%.2f", item.price));
 
             if(itemInitCount != getItemCount()) {
-                coinNameView.setText(item.coinName);
+                coinNameView.setText(item.coinId);
 
                 Context context = logoView.getContext();
                 int imageId = context.getResources().getIdentifier(item.coinId.toLowerCase(), "drawable", context.getPackageName());
