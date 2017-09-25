@@ -171,6 +171,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
     public void onItemClick(DataModel item) {
         System.out.println(item);
         Intent myIntent = new Intent(MainActivity.this, ChartActivity.class);
+        Bundle bundle = new Bundle();
+
+        bundle.putString("coinName", item.coinName);
+        myIntent.putExtra("packBundle", bundle);
+
         startActivity(myIntent);
 
 

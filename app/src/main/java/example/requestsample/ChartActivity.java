@@ -1,5 +1,6 @@
 package example.requestsample;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
@@ -40,7 +41,9 @@ import okhttp3.Response;
 
 public class ChartActivity extends AppCompatActivity {
     private LineChart mChart;
-    private String url = "https://graphs.coinmarketcap.com/currencies/bitcoin/1503668055000/1506346455000/";
+    private String coinName;
+    private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/1503668055000/1506346455000/";
+    private  String url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,14 @@ public class ChartActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_chart);
+
+        Intent callerIntent = getIntent();
+
+        Bundle packBundle = callerIntent.getBundleExtra("packBundle");
+        coinName = packBundle.getString("coinName");
+
+        url = String.format(urlFormat, coinName.toLowerCase());
+        System.out.println(url);
 
         mChart = (LineChart) findViewById(R.id.chart);
 
@@ -146,7 +157,7 @@ public class ChartActivity extends AppCompatActivity {
             mChart.notifyDataSetChanged();
         } else {
             // create a dataset and give it a type
-            set1 = new LineDataSet(values, "DataSet 1");
+            set1 = new LineDataSet(values, coinName);
 
             set1.setDrawIcons(false);
             set1.setDrawCircles(false);
