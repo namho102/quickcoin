@@ -1,5 +1,6 @@
 package example.requestsample;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
             add(new DataModel("ETH", "Ethereum", 256.65));
         }};
 
-        adapter = new RecyclerViewAdapter(arrayList);
+        adapter = new RecyclerViewAdapter(arrayList, this);
         recyclerView.setAdapter(adapter);
 
         layoutManager = new AutoFitGridLayoutManager(this, 500);
@@ -168,6 +169,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
 
     @Override
     public void onItemClick(DataModel item) {
+        System.out.println(item);
+        Intent myIntent = new Intent(MainActivity.this, ChartActivity.class);
+        startActivity(myIntent);
+
 
     }
 

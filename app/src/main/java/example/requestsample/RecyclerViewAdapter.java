@@ -20,8 +20,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     protected ItemListener mListener;
     int itemInitCount = 0;
 
-    public RecyclerViewAdapter(ArrayList<DataModel> values) {
+    public RecyclerViewAdapter(ArrayList<DataModel> values, ItemListener itemListener) {
         mValues = values;
+        mListener = itemListener;
     }
 
     public void updateList(ArrayList<DataModel> values) {
