@@ -23,7 +23,8 @@
         <activity
             android:name=".ChartActivity"
             android:label="@string/title_activity_chart"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".ConvertActivity"></activity>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package example.requestsample;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.yalantis.guillotine.animation.GuillotineAnimation;
@@ -46,13 +48,16 @@ import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity implements RecyclerRefreshLayout.OnRefreshListener, RecyclerViewAdapter.ItemListener {
 
-    private String url =  "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,LTC,DASH,ETH&tsyms=USD";
+    private String url = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,LTC,DASH,ETH&tsyms=USD";
     private RecyclerRefreshLayout swipeLayout;
-//    private String coinIDs[] = {"BTC", "LTC", "DASH", "ETH"};
+    //private String coinIDs[] = {"BTC", "LTC", "DASH", "ETH"};
     private ArrayList<DataModel> arrayList;
     private RecyclerView recyclerView;
     private AutoFitGridLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
+    private SharedPreferences sharedPreListCoin;
+
+    TextView btnConvert;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -80,15 +85,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
                 .setClosedOnStart(true)
                 .build();
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        initApp();
 
-        //fake data
-        arrayList = new ArrayList<DataModel>() {{
-            add(new DataModel("BTC", "Bitcoin", 3573.27));
-            add(new DataModel("LTC", "Litecoin", 45.35));
-            add(new DataModel("DASH", "Dash", 332.33));
-            add(new DataModel("ETH", "Ethereum", 256.65));
-        }};
+        updateData();
 
         adapter = new RecyclerViewAdapter(arrayList, this);
         recyclerView.setAdapter(adapter);
@@ -96,19 +95,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
         layoutManager = new AutoFitGridLayoutManager(this, 500);
         recyclerView.setLayoutManager(layoutManager);
 
-        swipeLayout = (RecyclerRefreshLayout) findViewById(R.id.swipe_container);
         swipeLayout.setRefreshStyle(RecyclerRefreshLayout.RefreshStyle.FLOAT);
-//        swipeLayout.setRefreshInitialOffset(30);
+        //swipeLayout.setRefreshInitialOffset(30);
         swipeLayout.setOnRefreshListener(this);
 
-//        updateData();
-
+        addEventMainMenu();
     }
 
     @Override
     public void onRefresh() {
         updateData();
-
     }
 
     private void updateData() {
@@ -118,10 +114,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
                 .url(url)
                 .build();
 
-
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                updateListCoinFromSharedPre();
                 call.cancel();
             }
 
@@ -129,58 +125,29 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
             public void onResponse(Call call, Response response) throws IOException {
 
                 final String myResponse = response.body().string();
+                //save data every time activity reload
+                saveListCoinToSharedPre(myResponse);
 
                 MainActivity.this.runOnUiThread(new Runnable() {
-
-
                     @Override
                     public void run() {
-
-                        try {
-                            JSONObject jsonObj = new JSONObject(myResponse);
-//                            arrayList = new ArrayList<>();
-//
-//
-//                            for(String coinID: coinIDs) {
-//                                arrayList.add(new DataModel(coinID, String.format("%.2f", getPrice(jsonObj, coinID)) + " USD", "#09A9FF"));
-//                            }
-
-                            for(DataModel item: arrayList) {
-                                item.price = getPrice(jsonObj, item.coinId);
-                            }
-
-                            adapter.updateList(arrayList);
-
-                            swipeLayout.setRefreshing(false);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
+                        updateListCoinFormStringJson(myResponse);
+                        adapter.updateList(arrayList);
+                        swipeLayout.setRefreshing(false);
                     }
                 });
-
             }
         });
-
-
     }
-
-
     @Override
     public void onItemClick(DataModel item) {
         System.out.println(item);
         Intent myIntent = new Intent(MainActivity.this, ChartActivity.class);
         Bundle bundle = new Bundle();
-
         bundle.putString("coinName", item.coinName);
         myIntent.putExtra("packBundle", bundle);
-
         startActivity(myIntent);
-
-
     }
-
     public double getPrice(JSONObject jsonObj, String coinName) {
         try {
             JSONObject tickerObj = new JSONObject(jsonObj.getString(coinName));
@@ -191,7 +158,63 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
         }
         return 0;
     }
+    public void initApp() {
+        //mapping view
+        swipeLayout = (RecyclerRefreshLayout) findViewById(R.id.swipe_container);
+        btnConvert = (TextView) findViewById(R.id.btn_MainMenu_Convert);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        //init sharedPre
+        sharedPreListCoin = getSharedPreferences("dataListCoin",MODE_PRIVATE);
+        //init list coin data
+        arrayList = new ArrayList<DataModel>() {{
+            add(new DataModel("BTC", "Bitcoin", 0));
+            add(new DataModel("LTC", "Litecoin", 0));
+            add(new DataModel("DASH", "Dash", 0));
+            add(new DataModel("ETH", "Ethereum", 0));
+        }};
+        updateListCoinFromSharedPre();
+    }
+    public void saveListCoinToSharedPre(String s){
+        SharedPreferences.Editor editor = sharedPreListCoin.edit();
+        editor.putString("fullListCoinData", s);
+        editor.commit();
+    }
+    public void updateListCoinFromSharedPre(){
+        String listCoin = sharedPreListCoin.getString("fullListCoinData", "");
+        if(!listCoin.isEmpty()){
+        updateListCoinFormStringJson(listCoin);
+        }
+    }
+    public void updateListCoinFormStringJson(String s){
+        try {
+            JSONObject jsonObj = new JSONObject(s);
+            for(DataModel item: arrayList) {
+                item.price = getPrice(jsonObj, item.coinId);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void addEventMainMenu()
+    {
+        btnConvert.setOnClickListener(new MyButtonEvent());
+    }
 
 
-
+    private class MyButtonEvent implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+            case R.id.btn_MainMenu_Convert:
+                Toast.makeText(getApplicationContext(), "Chuyen Sang Convert Activity", Toast.LENGTH_LONG);
+                String listCoin = sharedPreListCoin.getString("fullListCoinData", "");
+                Intent i = new Intent(getApplicationContext(), ConvertActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("fullListCoinData",listCoin);
+                i.putExtra("packBundle", bundle);
+                startActivity(i);
+                break;
+            }
+        }
+    }
 }
