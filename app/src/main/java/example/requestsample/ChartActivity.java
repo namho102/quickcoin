@@ -40,6 +40,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class ChartActivity extends AppCompatActivity {
+
+    //test new branch
+    private String super = "ghe qua, nam da lam chart roi";
+    //end sinh		
+
     private LineChart mChart;
     private String coinName;
     private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/1503668055000/1506346455000/";
