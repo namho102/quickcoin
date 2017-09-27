@@ -1,7 +1,9 @@
 package example.requestsample;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
@@ -66,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifi.setWifiEnabled(true);//Turn on Wifi
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
