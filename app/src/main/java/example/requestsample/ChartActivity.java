@@ -42,7 +42,7 @@ import okhttp3.Response;
 public class ChartActivity extends AppCompatActivity {
     private LineChart mChart;
     private String coinName;
-    private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/1503668055000/1506346455000/";
+    private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/%d/%d/";
     private  String url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +57,8 @@ public class ChartActivity extends AppCompatActivity {
         Bundle packBundle = callerIntent.getBundleExtra("packBundle");
         coinName = packBundle.getString("coinName");
 
-        url = String.format(urlFormat, coinName.toLowerCase());
-        System.out.println(url);
+//        url = String.format(urlFormat, coinName.toLowerCase());
+//        System.out.println(url);
 
         mChart = (LineChart) findViewById(R.id.chart);
 
@@ -117,7 +117,7 @@ public class ChartActivity extends AppCompatActivity {
         //mChart.getViewPortHandler().setMaximumScaleX(2f);
 
         // add data
-        loadData();
+        loadData(7);
 //        setData(45, 100);
 
 //        mChart.setVisibleXRange(20);
@@ -147,14 +147,15 @@ public class ChartActivity extends AppCompatActivity {
             values.add(new Entry(i++, price, getResources().getDrawable(R.drawable.star)));
         }
 
+        System.out.println(i);
         LineDataSet set1;
 
-        if (mChart.getData() != null &&
-                mChart.getData().getDataSetCount() > 0) {
+        if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
             set1.setValues(values);
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
+            System.out.println("redraw done");
         } else {
             // create a dataset and give it a type
             set1 = new LineDataSet(values, coinName);
@@ -178,7 +179,7 @@ public class ChartActivity extends AppCompatActivity {
 
             if (Utils.getSDKInt() >= 18) {
                 // fill drawable only supported on api level 18 and above
-                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
+                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.chart_background);
                 set1.setFillDrawable(drawable);
             } else {
                 set1.setFillColor(Color.BLACK);
@@ -197,7 +198,14 @@ public class ChartActivity extends AppCompatActivity {
 
     }
 
-    private void loadData() {
+    private void loadData(int range) {
+
+        long currentTime = System.currentTimeMillis();
+        long startimeTime = currentTime - Long.valueOf(range * 24 * 60 * 60 * 1000);
+
+        url = String.format(urlFormat, coinName.toLowerCase(), startimeTime, currentTime);
+        System.out.println(url);
+
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -235,6 +243,7 @@ public class ChartActivity extends AppCompatActivity {
 //                                System.out.println(item);
                                 priceList.add(new String[]{item.getString(0), item.getString(1)});
                             }
+                            System.out.println("load data done");
                             setData(priceList);
 
                         } catch (JSONException e) {
@@ -247,7 +256,15 @@ public class ChartActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
+
+    public void loadDataOnClick(View view) {
+        int range = Integer.parseInt(view.getTag().toString());
+//        System.out.println(range);
+        loadData(range);
+
+        //redraw
+//        mChart.invalidate();
+    }
 }

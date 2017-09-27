@@ -12,4 +12,5 @@
     <color name="guillotine_background_dark">#383547</color>
     <color name="selected_item_color">#30d1d5</color>
     <color name="card_background">#222329</color>
+    <color name="button_color">#222329</color>
 </resources>
