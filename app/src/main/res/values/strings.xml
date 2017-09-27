@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">RequestSample</string>
     <string name="title_activity_chart">ChartActivity</string>
+    <string name="title_activity_loading">Loading</string>
 </resources>

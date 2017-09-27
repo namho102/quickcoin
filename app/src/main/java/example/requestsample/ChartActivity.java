@@ -39,11 +39,15 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import com.wang.avi.AVLoadingIndicatorView;
+
 public class ChartActivity extends AppCompatActivity {
     private LineChart mChart;
     private String coinName;
     private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/%d/%d/";
     private  String url;
+    private AVLoadingIndicatorView avi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,10 @@ public class ChartActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_chart);
+
+        String indicator = getIntent().getStringExtra("indicator");
+        avi = (AVLoadingIndicatorView) findViewById(R.id.avi);
+        avi.setIndicator(indicator);
 
         Intent callerIntent = getIntent();
 
@@ -157,7 +165,9 @@ public class ChartActivity extends AppCompatActivity {
             mChart.notifyDataSetChanged();
             //redraw
             mChart.invalidate();
+
             mChart.animateX(1000);
+
 
             System.out.println("redraw done");
         } else {
@@ -199,7 +209,7 @@ public class ChartActivity extends AppCompatActivity {
             mChart.setData(data);
         }
 
-
+        avi.hide();
     }
 
     private void loadData(int range) {
@@ -264,6 +274,7 @@ public class ChartActivity extends AppCompatActivity {
 
 
     public void loadDataOnClick(View view) {
+        avi.show();
         int range = Integer.parseInt(view.getTag().toString());
 //        System.out.println(range);
         loadData(range);
