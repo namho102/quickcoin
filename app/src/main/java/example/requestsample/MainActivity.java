@@ -200,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
         btnConvert.setOnClickListener(new MyButtonEvent());
     }
 
-
     private class MyButtonEvent implements View.OnClickListener {
         @Override
         public void onClick(View view) {
