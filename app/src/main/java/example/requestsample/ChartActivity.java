@@ -155,6 +155,10 @@ public class ChartActivity extends AppCompatActivity {
             set1.setValues(values);
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
+            //redraw
+            mChart.invalidate();
+            mChart.animateX(1000);
+
             System.out.println("redraw done");
         } else {
             // create a dataset and give it a type
