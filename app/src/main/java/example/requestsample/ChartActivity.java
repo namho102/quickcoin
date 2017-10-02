@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -22,6 +23,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.Utils;
 
@@ -32,6 +34,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,7 +51,7 @@ public class ChartActivity extends AppCompatActivity {
     private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/%d/%d/";
     private  String url;
     private AVLoadingIndicatorView avi;
-
+    private  IAxisValueFormatter formatter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +96,24 @@ public class ChartActivity extends AppCompatActivity {
         // set an alternative background color
         // mChart.setBackgroundColor(Color.GRAY);
 
+        formatter = new IAxisValueFormatter() {
+
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                Date date = new Date((long) value);
+//                System.out.println((long) value);
+//                System.out.println(date.toString());
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int min = cal.get(Calendar.MINUTE);
+                String minStr = min < 10 ? "0" + min : "" + min;
+                return cal.get(Calendar.HOUR_OF_DAY) + ":" + minStr;
+            }
+
+
+        };
+
+
         // x-axis limit line
         LimitLine llXAxis = new LimitLine(10f, "Index 10");
         llXAxis.setLineWidth(4f);
@@ -100,6 +122,7 @@ public class ChartActivity extends AppCompatActivity {
         llXAxis.setTextSize(10f);
 
         XAxis xAxis = mChart.getXAxis();
+        xAxis.setValueFormatter(formatter);
         xAxis.enableGridDashedLine(10f, 10f, 0f);
         //xAxis.setValueFormatter(new MyCustomXAxisValueFormatter());
         //xAxis.addLimitLine(llXAxis); // add x-axis limit line
@@ -150,9 +173,9 @@ public class ChartActivity extends AppCompatActivity {
 
         int i = 0;
         for (String[] pair: priceList) {
-            String time = pair[0];
+            float time = Float.parseFloat(pair[0]);
             float price = Float.parseFloat(pair[1]);
-            values.add(new Entry(i++, price, getResources().getDrawable(R.drawable.star)));
+            values.add(new Entry(time, price, getResources().getDrawable(R.drawable.star)));
         }
 
         System.out.println(i);
@@ -216,7 +239,7 @@ public class ChartActivity extends AppCompatActivity {
 
         long currentTime = System.currentTimeMillis();
         long startTime = currentTime - range * 24 * 60 * 60 * 1000L;
-        
+
         url = String.format(urlFormat, coinName.toLowerCase(), startTime, currentTime);
         System.out.println(url);
 
