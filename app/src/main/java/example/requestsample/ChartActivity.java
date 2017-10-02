@@ -215,9 +215,9 @@ public class ChartActivity extends AppCompatActivity {
     private void loadData(int range) {
 
         long currentTime = System.currentTimeMillis();
-        long startimeTime = currentTime - Long.valueOf(range * 24 * 60 * 60 * 1000);
-
-        url = String.format(urlFormat, coinName.toLowerCase(), startimeTime, currentTime);
+        long startTime = currentTime - range * 24 * 60 * 60 * 1000L;
+        
+        url = String.format(urlFormat, coinName.toLowerCase(), startTime, currentTime);
         System.out.println(url);
 
         OkHttpClient client = new OkHttpClient();
