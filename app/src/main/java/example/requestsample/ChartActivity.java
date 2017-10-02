@@ -49,9 +49,12 @@ public class ChartActivity extends AppCompatActivity {
     private LineChart mChart;
     private String coinName;
     private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/%d/%d/";
-    private  String url;
+    private String url;
     private AVLoadingIndicatorView avi;
-    private  IAxisValueFormatter formatter;
+    private IAxisValueFormatter hourformatter;
+    private IAxisValueFormatter dateFormatter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,13 +99,10 @@ public class ChartActivity extends AppCompatActivity {
         // set an alternative background color
         // mChart.setBackgroundColor(Color.GRAY);
 
-        formatter = new IAxisValueFormatter() {
-
+        hourformatter = new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 Date date = new Date((long) value);
-//                System.out.println((long) value);
-//                System.out.println(date.toString());
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(date);
                 int min = cal.get(Calendar.MINUTE);
@@ -110,8 +110,23 @@ public class ChartActivity extends AppCompatActivity {
                 return cal.get(Calendar.HOUR_OF_DAY) + ":" + minStr;
             }
 
+        };
+
+
+        dateFormatter = new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                Date date = new Date((long) value);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int min = cal.get(Calendar.MINUTE);
+                String minStr = min < 10 ? "0" + min : "" + min;
+                return cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH);
+            }
+
 
         };
+
 
 
         // x-axis limit line
@@ -122,7 +137,7 @@ public class ChartActivity extends AppCompatActivity {
         llXAxis.setTextSize(10f);
 
         XAxis xAxis = mChart.getXAxis();
-        xAxis.setValueFormatter(formatter);
+        xAxis.setValueFormatter(dateFormatter);
         xAxis.enableGridDashedLine(10f, 10f, 0f);
         //xAxis.setValueFormatter(new MyCustomXAxisValueFormatter());
         //xAxis.addLimitLine(llXAxis); // add x-axis limit line
@@ -299,6 +314,16 @@ public class ChartActivity extends AppCompatActivity {
     public void loadDataOnClick(View view) {
         avi.show();
         int range = Integer.parseInt(view.getTag().toString());
+
+        XAxis xAxis = mChart.getXAxis();
+        if(range >= 7) {
+            xAxis.setValueFormatter(dateFormatter);
+        }
+        else {
+            xAxis.setValueFormatter(hourformatter);
+        }
+
+
 //        System.out.println(range);
         loadData(range);
 
