@@ -1,45 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:layout_height="match_parent"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditText
-        android:id="@+id/etInput"
+    <android.support.v7.widget.Toolbar
+    android:id="@+id/toolbar"
+    app:contentInsetStart="0dp"
+    style="@style/Toolbar">
+
+    <ImageView
+    android:id="@+id/content_hamburger"
+    style="@style/ImageView.Hamburger"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
+    android:src="@drawable/ic_menu_90"
+    android:layout_marginLeft="10dp" />
+
+    </android.support.v7.widget.Toolbar>
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       android:layout_alignParentTop="true"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentStart="true">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:layout_weight="1"
+           android:background="@color/cardview_light_background"
+           android:orientation="horizontal"
+           android:padding="50dp">
+
+           <EditText
+               android:id="@+id/et1"
+               android:backgroundTint="@color/cardview_dark_background"
+               android:layout_width="0dp"
+               android:layout_height="90dp"
+               android:layout_gravity="center_vertical"
+               android:layout_weight="4"
+               android:textSize="50dp" />
+
+           <Spinner
+               android:id="@+id/spinner1"
+               android:layout_width="0dp"
+               android:layout_height="90dp"
+               android:layout_gravity="center_vertical"
+               android:layout_weight="3"
+               ></Spinner>
+
+       </LinearLayout>
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:layout_weight="1"
+           android:background="@color/blue_bright"
+           android:orientation="horizontal"
+           android:padding="50dp">
+
+           <!--<EditText-->
+               <!--android:id="@+id/et2"-->
+               <!--android:layout_width="wrap_content"-->
+               <!--android:layout_height="90dp"-->
+               <!--android:textSize="20dp"-->
+               <!--android:layout_gravity="center_vertical"-->
+               <!--android:layout_weight="4"-->
+               <!--android:textColor="@color/cardview_light_background"-->
+               <!--android:backgroundTint="@color/cardview_light_background"-->
+               <!--/>-->
+
+           <TextView
+               android:id="@+id/tv2"
+               android:textSize="50dp"
+               android:layout_width="0dp"
+               android:layout_height="90dp"
+               android:layout_weight="4"
+               android:textColor="?attr/editTextColor"
+               android:background="?attr/editTextBackground"
+               android:gravity="center_vertical"
+               android:textAppearance="?android:attr/textAppearanceMediumInverse"
+               />
+
+           <Spinner
+               android:id="@+id/spinner2"
+               android:backgroundTint="@color/cardview_light_background"
+               android:layout_width="0dp"
+               android:layout_height="90dp"
+               android:layout_gravity="center_vertical"
+               android:layout_weight="3" />
+       </LinearLayout>
+
+   </LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btnEx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="113dp"
-        android:ems="10"
-        android:inputType="number"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:layout_below="@+id/etInput"
-        android:layout_alignLeft="@+id/etInput"
-        android:layout_alignStart="@+id/etInput"
-        android:layout_alignRight="@+id/etInput"
-        android:layout_alignEnd="@+id/etInput" />
-
-    <Button
-        android:id="@+id/btnOk"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/spinner"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
-        android:text="Convert" />
-
-    <TextView
-        android:id="@+id/tvResult"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnOk"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="76dp"
-        android:text="0" />
+        android:layout_centerInParent="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:src="@drawable/ic_swap"
+        />
 </RelativeLayout>
+
+
