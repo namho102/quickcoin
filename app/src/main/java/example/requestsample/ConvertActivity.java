@@ -1,14 +1,18 @@
 package example.requestsample;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,7 +38,7 @@ import okhttp3.Response;
 
 public class ConvertActivity extends AppCompatActivity {
     private String coinIDs1[] = {"BTC", "LTC", "DASH", "ETH", "USD", "EUR"};
-    private String coinIDs2[] = {"BTC", "LTC", "DASH", "ETH", "USD", "EUR"};
+    private String coinIDs2[] = {"USD", "EUR" ,"BTC", "LTC", "DASH", "ETH"};
     private String coin1, coin2;
     private double coinValue;
 
@@ -173,13 +177,13 @@ public class ConvertActivity extends AppCompatActivity {
         //binding to view
         double round = round(price, 2);
         try {
-            String s = Double.toString(round);
-            tv2.setText(Double.toString(round));
-        }catch (Exception e)
-        {
-            Log.d("CAST", "can not cast to double");
-        }
-
+            String rs = Double.toString(round);
+            float a = tv2.getWidth()/rs.length();
+            float b = et1.getTextSize()- 25;
+            float textSize = a > b ? b : a;
+            tv2.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+            tv2.setText(rs);
+        }catch (Exception e){}
     }
 
     public boolean isDouble(String s){
@@ -198,10 +202,12 @@ public class ConvertActivity extends AppCompatActivity {
         return bd.doubleValue();
     }
     public void lockUI(){
-        findViewById(R.id.loadDing).setVisibility(View.VISIBLE);
+        findViewById(R.id.loadDing).setVisibility(View.VISIBLE); //show progressbar
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE); //disable touch
     }
     public void openUI(){
         findViewById(R.id.loadDing).setVisibility(View.GONE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }
 
