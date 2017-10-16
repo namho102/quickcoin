@@ -72,9 +72,11 @@ public class ConvertActivity extends AppCompatActivity {
         btnEx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if(!isDouble(et1.getText().toString())){
                     Toast.makeText(getApplicationContext(), "Please input number only!", Toast.LENGTH_LONG).show();
                 }else if(!et1.getText().toString().isEmpty()){
+                    lockUI();
                     coin1 = spinner1.getSelectedItem().toString();
                     coin2 = spinner2.getSelectedItem().toString();
                     coinValue = Double.parseDouble(et1.getText().toString());
@@ -124,14 +126,27 @@ public class ConvertActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                ConvertActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        openUI();
+                        Toast.makeText(getApplicationContext(), "Please check your connection!", Toast.LENGTH_LONG).show();
+                    }
+                });
                 call.cancel();
-                Toast.makeText(getApplicationContext(), "No internet connection!", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String myResponse = response.body().string();
-                convertCoin(myResponse);
+
+                ConvertActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        convertCoin(myResponse);
+                        openUI();
+                    }
+                });
             }
         });
     }
@@ -158,11 +173,13 @@ public class ConvertActivity extends AppCompatActivity {
         //binding to view
         double round = round(price, 2);
         try {
+            String s = Double.toString(round);
             tv2.setText(Double.toString(round));
         }catch (Exception e)
         {
             Log.d("CAST", "can not cast to double");
         }
+
     }
 
     public boolean isDouble(String s){
@@ -179,6 +196,12 @@ public class ConvertActivity extends AppCompatActivity {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+    public void lockUI(){
+        findViewById(R.id.loadDing).setVisibility(View.VISIBLE);
+    }
+    public void openUI(){
+        findViewById(R.id.loadDing).setVisibility(View.GONE);
     }
 }
 
