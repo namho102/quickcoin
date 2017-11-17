@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">RequestSample</string>
     <string name="title_activity_chart">ChartActivity</string>
+<<<<<<< HEAD
 
     <string name="main_menu_convert">CONVERT</string>
     <string name="main_menu_setting">SETTING</string>
+=======
+    <string name="title_activity_loading">Loading</string>
+>>>>>>> master
 </resources>

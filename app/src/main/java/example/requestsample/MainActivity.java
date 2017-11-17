@@ -1,8 +1,10 @@
 package example.requestsample;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
@@ -56,8 +58,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
     private AutoFitGridLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
     private SharedPreferences sharedPreListCoin;
+<<<<<<< HEAD
 
     TextView btnConvert;
+=======
+>>>>>>> master
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -71,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+//        WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+//        wifi.setWifiEnabled(true);//Turn on Wifi
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -84,27 +91,84 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
                 .setActionBarViewForAnimation(toolbar)
                 .setClosedOnStart(true)
                 .build();
+//
 
         initApp();
 
+<<<<<<< HEAD
+        initApp();
+
         updateData();
+=======
+        updateData();
+
+    }
+
+
+    @Override
+    public void onRefresh() {
+        updateData();
+
+    }
+
+
+    @Override
+    public void onItemClick(DataModel item) {
+        System.out.println(item);
+        Intent myIntent = new Intent(MainActivity.this, ChartActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("coinName", item.coinName);
+        myIntent.putExtra("packBundle", bundle);
+        startActivity(myIntent);
+    }
+
+
+    public void initApp() {
+        //mapping view
+
+//        btnConvert = (TextView) findViewById(R.id.btn_MainMenu_Convert);
+
+        //recycler view
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+        //init sharedPre
+        sharedPreListCoin = getSharedPreferences("dataListCoin", MODE_PRIVATE);
+        //init list coin data
+        arrayList = new ArrayList<DataModel>() {{
+            add(new DataModel("BTC", "Bitcoin", 0));
+            add(new DataModel("LTC", "Litecoin", 0));
+            add(new DataModel("DASH", "Dash", 0));
+            add(new DataModel("ETH", "Ethereum", 0));
+        }};
+>>>>>>> master
 
         adapter = new RecyclerViewAdapter(arrayList, this);
         recyclerView.setAdapter(adapter);
 
+        //layout manager
         layoutManager = new AutoFitGridLayoutManager(this, 500);
         recyclerView.setLayoutManager(layoutManager);
 
+<<<<<<< HEAD
+=======
+        //swipe layout
+        swipeLayout = (RecyclerRefreshLayout) findViewById(R.id.swipe_container);
+>>>>>>> master
         swipeLayout.setRefreshStyle(RecyclerRefreshLayout.RefreshStyle.FLOAT);
         //swipeLayout.setRefreshInitialOffset(30);
         swipeLayout.setOnRefreshListener(this);
 
+<<<<<<< HEAD
         addEventMainMenu();
     }
 
     @Override
     public void onRefresh() {
         updateData();
+=======
+
+        updateListCoinFromSharedPre();
+>>>>>>> master
     }
 
     private void updateData() {
@@ -139,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
             }
         });
     }
+<<<<<<< HEAD
     @Override
     public void onItemClick(DataModel item) {
         System.out.println(item);
@@ -147,6 +212,32 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
         bundle.putString("coinName", item.coinName);
         myIntent.putExtra("packBundle", bundle);
         startActivity(myIntent);
+=======
+
+
+    public void saveListCoinToSharedPre(String s) {
+        SharedPreferences.Editor editor = sharedPreListCoin.edit();
+        editor.putString("fullListCoinData", s);
+        editor.commit();
+    }
+
+    public void updateListCoinFromSharedPre() {
+        String listCoin = sharedPreListCoin.getString("fullListCoinData", "");
+        if(!listCoin.isEmpty()){
+            updateListCoinFormStringJson(listCoin);
+        }
+    }
+
+    public void updateListCoinFormStringJson(String s) {
+        try {
+            JSONObject jsonObj = new JSONObject(s);
+            for(DataModel item: arrayList) {
+                item.price = getPrice(jsonObj, item.coinId);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+>>>>>>> master
     }
     public double getPrice(JSONObject jsonObj, String coinName) {
         try {
@@ -200,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
         btnConvert.setOnClickListener(new MyButtonEvent());
     }
 
+<<<<<<< HEAD
     private class MyButtonEvent implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -216,4 +308,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerRefreshLa
             }
         }
     }
+=======
+
+>>>>>>> master
 }

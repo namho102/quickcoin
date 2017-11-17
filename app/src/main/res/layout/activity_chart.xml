@@ -1,13 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="10dp"
+        app:indicatorColor="@color/red_light"
+        app:indicatorName="BallGridPulseIndicator" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:layout_marginLeft="@dimen/margin10"
+        android:layout_marginRight="@dimen/margin10"
+        android:layout_marginTop="@dimen/margin10"
+        android:layout_above="@+id/relativeLayout2" />
 
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/relativeLayout2">
+
+        <Button
+            android:layout_width="@dimen/mini_button_width"
+            android:layout_height="wrap_content"
+            android:text="1D"
+            android:textColor="#fff"
+            android:background="@drawable/button_background"
+            android:id="@+id/button"
+            android:tag="1"
+            android:onClick="loadDataOnClick">
+        </Button>
+        <Button
+            android:layout_width="@dimen/mini_button_width"
+            android:layout_height="wrap_content"
+            android:text="1W"
+            android:background="@drawable/button_background"
+            android:textColor="#fff"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/button"
+            android:layout_toEndOf="@+id/button"
+            android:id="@+id/button2"
+            android:tag="7"
+            android:onClick="loadDataOnClick">
+        </Button>
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="@dimen/mini_button_width"
+            android:layout_height="wrap_content"
+            android:text="1M"
+            android:textColor="#fff"
+            android:background="@drawable/button_background"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/button2"
+            android:layout_toEndOf="@+id/button2"
+            android:tag="30"
+            android:onClick="loadDataOnClick">
+        </Button>
+
+
+
+
+
+    </RelativeLayout>
 
 </RelativeLayout>
