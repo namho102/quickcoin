@@ -6,15 +6,23 @@ import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -22,16 +30,20 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,28 +51,46 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ChartActivity extends AppCompatActivity {
+import com.wang.avi.AVLoadingIndicatorView;
+
+public class ChartActivity extends Fragment {
     private LineChart mChart;
     private String coinName;
-    private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/1503668055000/1506346455000/";
-    private  String url;
+    private String urlFormat = "https://graphs.coinmarketcap.com/currencies/%s/%d/%d/";
+    private String url;
+    private AVLoadingIndicatorView avi;
+    private IAxisValueFormatter hourformatter;
+    private IAxisValueFormatter dateFormatter;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        setContentView(R.layout.activity_chart);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_chart,null);
+        if(getArguments()!=null) {
+            coinName= this.getArguments().getString("coinName");
+        }
+//        String indicator = getIntent().getStringExtra("indicator");
+//        String abc=null;
+//        Log.d("Help",abc);
+        String indicator=null;
+        avi = (AVLoadingIndicatorView) view.findViewById(R.id.avi);
+        avi.setIndicator(indicator);
+        ((TextView) getActivity().findViewById(R.id.title)).setText(coinName);
+//        Intent callerIntent = getIntent();
+//
+//        Bundle packBundle = callerIntent.getBundleExtra("packBundle");
+//        coinName = packBundle.getString("coinName");
+//        coinName="Bitcoin";
+//        url = String.format(urlFormat, coinName.toLowerCase());
+//        System.out.println(url);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_chart);
-
-        Intent callerIntent = getIntent();
-
-        Bundle packBundle = callerIntent.getBundleExtra("packBundle");
-        coinName = packBundle.getString("coinName");
-
-        url = String.format(urlFormat, coinName.toLowerCase());
-        System.out.println(url);
-
-        mChart = (LineChart) findViewById(R.id.chart);
+        mChart = (LineChart) view.findViewById(R.id.chart);
 
         mChart.setDrawGridBackground(false);
 
@@ -84,6 +114,36 @@ public class ChartActivity extends AppCompatActivity {
         // set an alternative background color
         // mChart.setBackgroundColor(Color.GRAY);
 
+        hourformatter = new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                Date date = new Date((long) value);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int min = cal.get(Calendar.MINUTE);
+                String minStr = min < 10 ? "0" + min : "" + min;
+                return cal.get(Calendar.HOUR_OF_DAY) + ":" + minStr;
+            }
+
+        };
+
+
+        dateFormatter = new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                Date date = new Date((long) value);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int min = cal.get(Calendar.MINUTE);
+                String minStr = min < 10 ? "0" + min : "" + min;
+                return cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH);
+            }
+
+
+        };
+
+
+
         // x-axis limit line
         LimitLine llXAxis = new LimitLine(10f, "Index 10");
         llXAxis.setLineWidth(4f);
@@ -92,6 +152,7 @@ public class ChartActivity extends AppCompatActivity {
         llXAxis.setTextSize(10f);
 
         XAxis xAxis = mChart.getXAxis();
+        xAxis.setValueFormatter(dateFormatter);
         xAxis.enableGridDashedLine(10f, 10f, 0f);
         //xAxis.setValueFormatter(new MyCustomXAxisValueFormatter());
         //xAxis.addLimitLine(llXAxis); // add x-axis limit line
@@ -117,7 +178,7 @@ public class ChartActivity extends AppCompatActivity {
         //mChart.getViewPortHandler().setMaximumScaleX(2f);
 
         // add data
-        loadData();
+        loadData(7);
 //        setData(45, 100);
 
 //        mChart.setVisibleXRange(20);
@@ -135,6 +196,8 @@ public class ChartActivity extends AppCompatActivity {
 
         // // dont forget to refresh the drawing
         // mChart.invalidate();
+        loadDataOnClick(view);
+        return view;
     }
 
     private void setData(ArrayList<String[]> priceList) {
@@ -142,19 +205,26 @@ public class ChartActivity extends AppCompatActivity {
 
         int i = 0;
         for (String[] pair: priceList) {
-            String time = pair[0];
+            float time = Float.parseFloat(pair[0]);
             float price = Float.parseFloat(pair[1]);
-            values.add(new Entry(i++, price, getResources().getDrawable(R.drawable.star)));
+            values.add(new Entry(time, price, getResources().getDrawable(R.drawable.star)));
         }
 
+        System.out.println(i);
         LineDataSet set1;
 
-        if (mChart.getData() != null &&
-                mChart.getData().getDataSetCount() > 0) {
+        if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
             set1.setValues(values);
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
+            //redraw
+            mChart.invalidate();
+
+            mChart.animateX(1000);
+
+
+            System.out.println("redraw done");
         } else {
             // create a dataset and give it a type
             set1 = new LineDataSet(values, coinName);
@@ -178,7 +248,7 @@ public class ChartActivity extends AppCompatActivity {
 
             if (Utils.getSDKInt() >= 18) {
                 // fill drawable only supported on api level 18 and above
-                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
+                Drawable drawable = ContextCompat.getDrawable(this.getContext(), R.drawable.chart_background);
                 set1.setFillDrawable(drawable);
             } else {
                 set1.setFillColor(Color.BLACK);
@@ -194,10 +264,17 @@ public class ChartActivity extends AppCompatActivity {
             mChart.setData(data);
         }
 
-
+        avi.hide();
     }
 
-    private void loadData() {
+    private void loadData(int range) {
+
+        long currentTime = System.currentTimeMillis();
+        long startTime = currentTime - range * 24 * 60 * 60 * 1000L;
+
+        url = String.format(urlFormat, coinName.toLowerCase(), startTime, currentTime);
+        System.out.println(url);
+
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -216,7 +293,9 @@ public class ChartActivity extends AppCompatActivity {
 
                 final String myResponse = response.body().string();
 
-                ChartActivity.this.runOnUiThread(new Runnable() {
+                //addition to avoid Runnable error: on a null object reference when not finishing thread
+                if(getActivity()==null)return;
+                ChartActivity.this.getActivity().runOnUiThread(new Runnable() {
 
 
                     @Override
@@ -235,6 +314,7 @@ public class ChartActivity extends AppCompatActivity {
 //                                System.out.println(item);
                                 priceList.add(new String[]{item.getString(0), item.getString(1)});
                             }
+                            System.out.println("load data done");
                             setData(priceList);
 
                         } catch (JSONException e) {
@@ -247,7 +327,55 @@ public class ChartActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
+
+    public void loadDataOnClick(View view) {
+
+        final Integer btn_press=1;
+        View.OnClickListener lis = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                avi.show();
+                int range = Integer.parseInt(view.getTag().toString());
+                if(range<7) ((TextView)getActivity().findViewById(R.id.title)).setText(coinName + " - Day");
+                else if(range==7) ((TextView)getActivity().findViewById(R.id.title)).setText(coinName + " - Week");
+                if(range>7) ((TextView)getActivity().findViewById(R.id.title)).setText(coinName + " - Month");
+                XAxis xAxis = mChart.getXAxis();
+                if(range >= 7) {
+                    xAxis.setValueFormatter(dateFormatter);
+                }
+                else {
+                    xAxis.setValueFormatter(hourformatter);
+                }
+
+
+//        System.out.println(range);
+                loadData(range);
+            }
+        };
+        Button btn1=(Button)view.findViewById(R.id.button);
+        Button btn2=(Button)view.findViewById(R.id.button2);
+        Button btn3=(Button)view.findViewById(R.id.button3);
+        btn1.setOnClickListener(lis);
+        btn2.setOnClickListener(lis);
+        btn3.setOnClickListener(lis);
+//        avi.show();
+//        int range = Integer.parseInt(view.getTag().toString());
+//
+//        XAxis xAxis = mChart.getXAxis();
+//        if(range >= 7) {
+//            xAxis.setValueFormatter(dateFormatter);
+//        }
+//        else {
+//            xAxis.setValueFormatter(hourformatter);
+//        }
+//
+//
+////        System.out.println(range);
+//        loadData(range);
+
+        //redraw
+//        mChart.invalidate();
+    }
 }

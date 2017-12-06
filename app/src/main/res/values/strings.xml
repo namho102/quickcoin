@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RequestSample</string>
+    <string name="app_name">Quick coin</string>
     <string name="title_activity_chart">ChartActivity</string>
 
     <string name="main_menu_convert">CONVERT</string>

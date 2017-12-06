@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.ArrayAdapter;
@@ -36,7 +38,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ConvertActivity extends AppCompatActivity {
+public class ConvertActivity extends Fragment {
     private String coinIDs1[] = {"BTC", "LTC", "DASH", "ETH", "USD", "EUR"};
     private String coinIDs2[] = {"USD", "EUR" ,"BTC", "LTC", "DASH", "ETH"};
     private String coin1, coin2;
@@ -50,69 +52,73 @@ public class ConvertActivity extends AppCompatActivity {
     RelativeLayout root;
     View contentHamburger;
     FloatingActionButton btnEx;
+    View view;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_convert);
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_convert);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_convert,null);
+        mapping(view);
 
-        mapping();
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setTitle(null);
+//        }
 
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle(null);
-        }
-
-        View guillotineMenu = LayoutInflater.from(this).inflate(R.layout.guillotine, null);
-        root.addView(guillotineMenu);
-
-        new GuillotineAnimation.GuillotineBuilder(guillotineMenu, guillotineMenu.findViewById(R.id.guillotine_hamburger), contentHamburger)
-                .setActionBarViewForAnimation(toolbar)
-                .setClosedOnStart(true)
-                .build();
+//        View guillotineMenu = LayoutInflater.from(this).inflate(R.layout.guillotine, null);
+//        root.addView(guillotineMenu);
+//
+//        new GuillotineAnimation.GuillotineBuilder(guillotineMenu, guillotineMenu.findViewById(R.id.guillotine_hamburger), contentHamburger)
+//                .setActionBarViewForAnimation(toolbar)
+//                .setClosedOnStart(true)
+//                .build();
 
         bindingSpinner(spinner1, coinIDs1, 1);
         bindingSpinner(spinner2, coinIDs2, 2);
 
         btnEx.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
 
                 if(!isDouble(et1.getText().toString())){
-                    Toast.makeText(getApplicationContext(), "Please input number only!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext().getApplicationContext(), "Please input number only!", Toast.LENGTH_LONG).show();
                 }else if(!et1.getText().toString().isEmpty()){
-                    lockUI();
+                    lockUI(view);
                     coin1 = spinner1.getSelectedItem().toString();
                     coin2 = spinner2.getSelectedItem().toString();
                     coinValue = Double.parseDouble(et1.getText().toString());
                     updateData();
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "Please input coin value!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext().getApplicationContext(), "Please input coin value!", Toast.LENGTH_LONG).show();
                 }
             }
         });
+        return view;
     }
 
-    public void mapping(){
+    public void mapping(View view){
         //et2 = (EditText) findViewById(R.id.et2);
-        et1 = (EditText) findViewById(R.id.et1);
-        tv2 = (TextView) findViewById(R.id.tv2);
-        spinner1 = (Spinner) findViewById(R.id.spinner1);
-        spinner2 = (Spinner) findViewById(R.id.spinner2);
+        et1 = (EditText) view.findViewById(R.id.et1);
+        tv2 = (TextView) view.findViewById(R.id.tv2);
+        spinner1 = (Spinner) view.findViewById(R.id.spinner1);
+        spinner2 = (Spinner) view.findViewById(R.id.spinner2);
         spinner2.getBackground().setColorFilter(getResources().getColor(R.color.blue_bright), PorterDuff.Mode.SRC_ATOP);
-        btnEx = (FloatingActionButton) findViewById(R.id.btnEx);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        root = (RelativeLayout) findViewById(R.id.root);
-        contentHamburger = (View) findViewById(R.id.content_hamburger);
+        btnEx = (FloatingActionButton) view.findViewById(R.id.btnEx);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        root = (RelativeLayout) view.findViewById(R.id.root);
+        contentHamburger = (View) view.findViewById(R.id.content_hamburger);
     }
 
     public void bindingSpinner(Spinner spinner, String[] coinIDs, int type){
         ArrayAdapter<String> adapter = null;
         if(type == 1)
         {
-             adapter = new ArrayAdapter<String>(this, R.layout.spinner_item_black,coinIDs);
+             adapter = new ArrayAdapter<String>(this.getContext(), R.layout.spinner_item_black,coinIDs);
         }else {
-            adapter = new ArrayAdapter<String>(this, R.layout.spinner_item_white,coinIDs);
+            adapter = new ArrayAdapter<String>(this.getContext(), R.layout.spinner_item_white,coinIDs);
         }
 
         adapter.setDropDownViewResource
@@ -130,11 +136,11 @@ public class ConvertActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                ConvertActivity.this.runOnUiThread(new Runnable() {
+                ConvertActivity.this.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        openUI();
-                        Toast.makeText(getApplicationContext(), "Please check your connection!", Toast.LENGTH_LONG).show();
+                        openUI(view);
+                        Toast.makeText(getContext().getApplicationContext(), "Please check your connection!", Toast.LENGTH_LONG).show();
                     }
                 });
                 call.cancel();
@@ -143,12 +149,13 @@ public class ConvertActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String myResponse = response.body().string();
-
-                ConvertActivity.this.runOnUiThread(new Runnable() {
+                //addition to avoid Runnable error: on a null object reference
+                if(getActivity()==null)return;
+                ConvertActivity.this.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         convertCoin(myResponse);
-                        openUI();
+                        openUI(view);
                     }
                 });
             }
@@ -201,13 +208,13 @@ public class ConvertActivity extends AppCompatActivity {
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
-    public void lockUI(){
-        findViewById(R.id.loadDing).setVisibility(View.VISIBLE); //show progressbar
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE); //disable touch
+    public void lockUI(View vieW){
+        vieW.findViewById(R.id.loadDing).setVisibility(View.VISIBLE); //show progressbar
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE); //disable touch
     }
-    public void openUI(){
-        findViewById(R.id.loadDing).setVisibility(View.GONE);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    public void openUI(View vieW){
+        vieW.findViewById(R.id.loadDing).setVisibility(View.GONE);
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }
 

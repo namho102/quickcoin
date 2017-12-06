@@ -24,10 +24,10 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                app:contentInsetStart="0dp"
-                style="@style/Toolbar">
+            <!--<android.support.v7.widget.Toolbar-->
+                <!--android:id="@+id/toolbar"-->
+                <!--app:contentInsetStart="0dp"-->
+                <!--style="@style/Toolbar">-->
 
                 <!--<RelativeLayout-->
                     <!--android:layout_height="match_parent"-->
@@ -43,17 +43,17 @@
                         <!--/>-->
                 <!--</RelativeLayout>-->
 
-                <ImageView
-                    android:id="@+id/content_hamburger"
-                    style="@style/ImageView.Hamburger"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@drawable/ic_menu_90"
-                    android:layout_marginLeft="10dp"
-                    />
+                <!--<ImageView-->
+                    <!--android:id="@+id/content_hamburger"-->
+                    <!--style="@style/ImageView.Hamburger"-->
+                    <!--android:layout_width="26dp"-->
+                    <!--android:layout_height="26dp"-->
+                    <!--android:src="@drawable/ic_menu_90"-->
+                    <!--android:layout_marginLeft="10dp"-->
+                    <!--/>-->
 
 
-            </android.support.v7.widget.Toolbar>
+            <!--</android.support.v7.widget.Toolbar>-->
 
             <RelativeLayout
                 android:layout_width="match_parent"
